@@ -2,7 +2,7 @@ package com.wishwillow.engine.math
 import kotlin.math.cos
 import kotlin.math.sin
 import kotlin.math.tan
-class Mat4 private constructor(val m: FloatArray) {
+class Mat4(val m: FloatArray) {
     constructor() : this(FloatArray(16).also { it[0]=1f; it[5]=1f; it[10]=1f; it[15]=1f })
     fun multiply(o: Mat4): Mat4 { val a=m; val b=o.m; val r=FloatArray(16); for(i in 0..3) for(j in 0..3){var s=0f; for(k in 0..3) s+=a[i*4+k]*b[k*4+j]; r[i*4+j]=s}; return Mat4(r) }
     fun transpose(): Mat4 { val r=FloatArray(16); for(i in 0..3) for(j in 0..3) r[i*4+j]=m[j*4+i]; return Mat4(r) }

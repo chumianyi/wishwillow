@@ -13,7 +13,7 @@ data class Vec3(var x: Float = 0f, var y: Float = 0f, var z: Float = 0f) {
     fun cross(v: Vec3) = Vec3(y * v.z - z * v.y, z * v.x - x * v.z, x * v.y - y * v.x)
     fun length() = sqrt(x * x + y * y + z * z)
     fun normalize(): Vec3 { val l = length(); if (l > 1e-6f) { x /= l; y /= l; z /= l }; return this }
-    fun normalized() = Vec3(this).normalize()
+    fun normalized() = Vec3(x, y, z).normalize()
     fun lerp(target: Vec3, t: Float): Vec3 { val i = 1f - t; return Vec3(x * i + target.x * t, y * i + target.y * t, z * i + target.z * t) }
     companion object { val UP = Vec3(0f, 1f, 0f); val ZERO = Vec3(0f, 0f, 0f) }
 }

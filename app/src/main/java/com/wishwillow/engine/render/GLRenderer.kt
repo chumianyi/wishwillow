@@ -29,12 +29,12 @@ class GLRenderer(private val ctx: Context) : GLSurfaceView.Renderer {
     }
     private fun renderSky() {
         GLES30.glDisable(GLES30.GL_DEPTH_TEST); GLES30.glDisable(GLES30.GL_CULL_FACE)
-        sky.use(); sky.setMat4("uProjection",camera.getProj().toFloatArray()); sky.setMat4("uView",camera.getView().toFloatArray())
+        sky.use(); sky.setMat4("uProjection",camera.getProj().m); sky.setMat4("uView",camera.getView().m)
         sky.setVec3("uTopColor",0.72f,0.83f,0.91f); sky.setVec3("uBottomColor",0.91f,0.94f,0.91f); sky.setVec3("uSunDir",-0.5f,1f,-0.3f)
         skyMesh.draw(); GLES30.glEnable(GLES30.GL_DEPTH_TEST); GLES30.glEnable(GLES30.GL_CULL_FACE)
     }
     fun bindPhong(model: Mat4, tint: Vec3=Vec3(1f,1f,1f), alpha: Float=1f, useTex: Int=0) {
-        phong.use(); phong.setMat4("uModel",model.toFloatArray()); phong.setMat4("uView",camera.getView().toFloatArray()); phong.setMat4("uProjection",camera.getProj().toFloatArray())
+        phong.use(); phong.setMat4("uModel",model.m); phong.setMat4("uView",camera.getView().m); phong.setMat4("uProjection",camera.getProj().m)
         val nm=floatArrayOf(model.m[0],model.m[1],model.m[2],model.m[4],model.m[5],model.m[6],model.m[8],model.m[9],model.m[10])
         GLES30.glUniformMatrix3fv(phong.uloc("uNormalMatrix"),1,false,nm,0)
         phong.setVec3("uLightDir",light.direction.x,light.direction.y,light.direction.z)

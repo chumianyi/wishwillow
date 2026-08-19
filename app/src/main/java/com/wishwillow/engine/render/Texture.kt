@@ -22,7 +22,7 @@ class Texture {
         }
         fun particle(): Texture {
             val w=32;val h=32;val p=ByteArray(w*h*4)
-            for(y in 0 until h) for(x in 0 until w){val i=(y*w+x)*4;val dx=x-w/2f;val dy=y-h/2f;val d=kotlin.math.sqrt(dx*dx+dy*dy)/(w/2f);val a=((1f-d.coerceIn(0f,1f))*255f).toInt();p[i]=255;p[i+1]=255;p[i+2]=255;p[i+3]=a.toByte()}
+            for(y in 0 until h) for(x in 0 until w){val i=(y*w+x)*4;val dx=x-w/2f;val dy=y-h/2f;val d=kotlin.math.sqrt(dx*dx+dy*dy)/(w/2f);val a=((1f-d.coerceIn(0f,1f))*255f).toInt();p[i]=255.toByte();p[i+1]=255.toByte();p[i+2]=255.toByte();p[i+3]=a.toByte()}
             return Texture().apply{create(p,w,h)}
         }
     }

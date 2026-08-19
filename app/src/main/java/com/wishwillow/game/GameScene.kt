@@ -3,6 +3,7 @@ import android.opengl.GLES30
 import com.wishwillow.engine.math.Mat4
 import com.wishwillow.engine.math.Vec3
 import com.wishwillow.engine.render.GLRenderer
+import com.wishwillow.engine.render.Mesh
 import com.wishwillow.engine.render.MeshGenerator
 import com.wishwillow.engine.render.ParticleSystem
 import kotlin.math.sin
