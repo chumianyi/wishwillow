@@ -4,5 +4,7 @@
         <item name="android:statusBarColor">@color/neu_bg</item>
         <item name="android:windowLightStatusBar">true</item>
         <item name="android:windowBackground">@color/neu_bg</item>
+        <item name="android:windowFullscreen">true</item>
+        <item name="android:windowContentOverlay">@null</item>
     </style>
 </resources>
