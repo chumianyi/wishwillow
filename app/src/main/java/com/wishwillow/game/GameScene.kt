@@ -38,6 +38,6 @@ class GameScene : GLRenderer.Renderable {
         r.bindPhong(Mat4.translation(0f,2.25f,0f),Vec3(0.42f,0.27f,0.14f),1f,1); willow.trunk.draw()
         for(b in willow.branches){ val m=Mat4.translation(b.basePos.x,b.basePos.y,b.basePos.z); val tint=if(b.selected)Vec3(1.2f,1.1f,0.9f)else Vec3(0.45f,0.3f,0.16f); r.bindPhong(m,tint,1f,1); b.mesh.draw() }
         if(state!=GameState.RESULT||result!=WishResult.FAILED){ val hm=Mat4.translation(handPos.x,handPos.y,handPos.z).multiply(Mat4.rotation(handRot,Vec3(0f,0f,1f))).multiply(Mat4.rotation(-0.3f,Vec3(1f,0f,0f))).multiply(Mat4.scaling(1.5f,1.5f,1.5f)); r.bindPhong(hm,Vec3(1f,1f,1f),1f,0); hand.draw() }
-        GLES30.glDisable(GLES30.GL_CULL_FACE); GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA,GLES30.GL_ONE); r.particle.use(); r.particle.setMat4("uView",r.camera.getView().toFloatArray()); r.particle.setMat4("uProjection",r.camera.getProj().toFloatArray()); particles.draw(); glow.draw(); GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA,GLES30.GL_ONE_MINUS_SRC_ALPHA); GLES30.glEnable(GLES30.GL_CULL_FACE)
+        GLES30.glDisable(GLES30.GL_CULL_FACE); GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA,GLES30.GL_ONE); r.particle.use(); r.particle.setMat4("uView",r.camera.getView().m); r.particle.setMat4("uProjection",r.camera.getProj().m); particles.draw(); glow.draw(); GLES30.glBlendFunc(GLES30.GL_SRC_ALPHA,GLES30.GL_ONE_MINUS_SRC_ALPHA); GLES30.glEnable(GLES30.GL_CULL_FACE)
     }
 }
