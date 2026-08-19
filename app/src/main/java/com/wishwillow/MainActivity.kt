@@ -23,15 +23,20 @@ class MainActivity : AppCompatActivity() {
     private val h=Handler(Looper.getMainLooper())
     override fun onCreate(s: Bundle?){super.onCreate(s);setContentView(R.layout.activity_main)
         glv=findViewById(R.id.glSurfaceView); glv.setEGLContextClientVersion(3); glv.setEGLConfigChooser(8,8,8,8,16,0)
+        glv.isFocusable=false; glv.isFocusableInTouchMode=false; glv.isClickable=false
         scene=GameScene(); renderer=GLRenderer(this); renderer.scene=scene; glv.setRenderer(renderer); glv.renderMode=GLSurfaceView.RENDERMODE_CONTINUOUSLY
         wishEt=findViewById(R.id.wishEditText); submitBtn=findViewById(R.id.submitWishButton); againBtn=findViewById(R.id.tryAgainButton)
         inputLayout=findViewById(R.id.wishInputLayout); resultLayout=findViewById(R.id.resultLayout); resultTitle=findViewById(R.id.resultTitle); resultWish=findViewById(R.id.resultWishText); hint=findViewById(R.id.hintText)
+        wishEt.isFocusable=true; wishEt.isFocusableInTouchMode=true; wishEt.isClickable=true
+        wishEt.setOnClickListener{wishEt.requestFocus();showKb()}
         scene.onResult={r,w->h.post{showResult(r,w)}}
         submitBtn.setOnClickListener{val w=wishEt.text.toString().trim();if(w.isNotEmpty()){hideKb();inputLayout.visibility=View.GONE;hint.visibility=View.GONE;glv.queueEvent{scene.submitWish(w)}}}
-        againBtn.setOnClickListener{resultLayout.visibility=View.GONE;inputLayout.visibility=View.VISIBLE;hint.visibility=View.VISIBLE;wishEt.text.clear();glv.queueEvent{scene.reset()}}
+        againBtn.setOnClickListener{resultLayout.visibility=View.GONE;inputLayout.visibility=View.VISIBLE;hint.visibility=View.VISIBLE;wishEt.text.clear();wishEt.requestFocus();showKb();glv.queueEvent{scene.reset()}}
         wishEt.addTextChangedListener(object:TextWatcher{override fun beforeTextChanged(s:CharSequence?,st:Int,c:Int,a:Int){}override fun onTextChanged(s:CharSequence?,st:Int,b:Int,c:Int){submitBtn.alpha=if(s?.isNotEmpty()==true)1f else 0.5f}override fun afterTextChanged(s:Editable?){}})
         submitBtn.alpha=0.5f
+        h.postDelayed({wishEt.requestFocus();showKb()},300)
     }
+    private fun showKb(){wishEt.requestFocus();val imm=getSystemService(INPUT_METHOD_SERVICE)as InputMethodManager;imm.showSoftInput(wishEt,InputMethodManager.SHOW_IMPLICIT)}
     private fun showResult(r:WishResult,w:String){resultLayout.visibility=View.VISIBLE;resultLayout.startAnimation(AnimationUtils.loadAnimation(this,android.R.anim.fade_in));resultWish.text=getString(R.string.your_wish)+"："+w
         when(r){WishResult.SUCCESS_WHITE->{resultTitle.text=getString(R.string.wish_success);resultTitle.setTextColor(getColor(R.color.accent_blue));againBtn.accent=getColor(R.color.accent_blue)}
             WishResult.SUCCESS_RED->{resultTitle.text=getString(R.string.wish_success_cost);resultTitle.setTextColor(getColor(R.color.cost_red));againBtn.accent=getColor(R.color.cost_red)}
