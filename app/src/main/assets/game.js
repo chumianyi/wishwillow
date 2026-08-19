@@ -3,6 +3,13 @@ import { EffectComposer } from './js/postprocessing/EffectComposer.js';
 import { RenderPass } from './js/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from './js/postprocessing/UnrealBloomPass.js';
 
+// ============ Audio ============
+const ambientAudio = new Audio('ambient.wav');
+ambientAudio.loop = true;
+ambientAudio.volume = 0.35;
+document.addEventListener('touchstart', () => { if (ambientAudio.paused) ambientAudio.play().catch(()=>{}); }, { once: true });
+document.addEventListener('click', () => { if (ambientAudio.paused) ambientAudio.play().catch(()=>{}); }, { once: true });
+
 // ============ Scene Setup ============
 const container = document.getElementById('canvas-container');
 const scene = new THREE.Scene();
