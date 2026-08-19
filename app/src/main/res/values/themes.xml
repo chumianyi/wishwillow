@@ -1,19 +1,8 @@
 <resources xmlns:tools="http://schemas.android.com/tools">
     <style name="Theme.WishWillow" parent="Theme.MaterialComponents.DayNight.NoActionBar">
-        <item name="colorPrimary">#6bc5a0</item>
-        <item name="colorPrimaryVariant">#4a9eb8</item>
-        <item name="colorOnPrimary">#FFFFFF</item>
-        <item name="android:statusBarColor">#E0E5EC</item>
-        <item name="android:navigationBarColor">#E0E5EC</item>
-        <item name="android:windowLightStatusBar" tools:targetApi="m">true</item>
-    </style>
-
-    <style name="Theme.WishWillow.Fullscreen" parent="Theme.WishWillow">
-        <item name="android:windowNoTitle">true</item>
-        <item name="android:windowActionBar">false</item>
-        <item name="android:windowFullscreen">true</item>
-        <item name="android:windowContentOverlay">@null</item>
-        <item name="android:windowTranslucentStatus">true</item>
-        <item name="android:windowTranslucentNavigation">true</item>
+        <item name="colorPrimary">@color/accent_blue</item>
+        <item name="android:statusBarColor">@color/neu_bg</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowBackground">@color/neu_bg</item>
     </style>
 </resources>

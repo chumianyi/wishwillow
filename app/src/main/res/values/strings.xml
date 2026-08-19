@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">许愿柳</string>
+    <string name="make_a_wish">许下你的愿望</string>
+    <string name="wish_hint">在这里写下你的愿望…</string>
+    <string name="break_branch">轻折柳枝</string>
+    <string name="wish_success">愿望已被听见</string>
+    <string name="wish_success_cost">愿望成真，但有代价</string>
+    <string name="wish_failed">柳枝未断，愿望未成</string>
+    <string name="try_again">再试一次</string>
+    <string name="your_wish">你的愿望</string>
 </resources>

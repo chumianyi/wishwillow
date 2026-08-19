@@ -1,51 +1,76 @@
 name: Build Release APK
-
 on:
   push:
     branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-
-      - name: Cache Gradle
-        uses: actions/cache@v4
+      - name: Setup Gradle Wrapper
+        run: |
+          curl -sL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradle/wrapper/gradle-wrapper.jar
+          chmod +x gradlew
+      - name: Generate App Icons
+        run: |
+          python3 -c "
+          from PIL import Image, ImageDraw, ImageFilter
+          import math, os
+          def make_icon(size):
+              img = Image.new('RGBA', (size, size), (0,0,0,0))
+              draw = ImageDraw.Draw(img)
+              for r in range(size//2, 0, -1):
+                  t = r/(size//2)
+                  draw.ellipse([size//2-r,size//2-r,size//2+r,size//2+r], fill=(int(180+52*(1-t)),int(210+26*(1-t)),int(230+9*(1-t)),255))
+              cx,cy=size//2,size//2
+              draw.rectangle([cx-size//24,cy,cx+size//24,cy+size//3], fill=(107,68,35,255))
+              for i in range(7):
+                  ang=math.radians(-60+i*20)
+                  sx=cx+math.cos(ang)*size//8; sy=cy-size//12
+                  ex=sx+math.sin(ang)*size//3; ey=sy+size//2.5
+                  pts=[(sx+math.sin(t*6)*size//30, sy+(ey-sy)*t) for t in [j/19 for j in range(20)]]
+                  for j in range(len(pts)-1): draw.line([pts[j],pts[j+1]], fill=(124,179,66,255), width=max(1,size//60))
+              draw.ellipse([cx-size//3,cy-size//3,cx+size//3,cy+size//8], fill=(124,179,66,200))
+              return img
+          for name,sz in {'mdpi':48,'hdpi':72,'xhdpi':96,'xxhdpi':144,'xxxhdpi':192}.items():
+              p=f'app/src/main/res/mipmap-{name}'
+              os.makedirs(p, exist_ok=True)
+              make_icon(sz).save(f'{p}/ic_launcher.png')
+          print('Icons generated')
+          "
+      - name: Generate Noise Asset (12MB)
+        run: |
+          python3 -c "
+          import math, os
+          os.makedirs('app/src/main/assets', exist_ok=True)
+          size=128
+          with open('app/src/main/assets/noise_volume.bin','wb') as f:
+              for z in range(size):
+                  for y in range(size):
+                      for x in range(size):
+                          n1=int((math.sin(x*0.1+y*0.1+z*0.05)*0.5+0.5)*255)&0xFF
+                          n2=int((math.sin(x*0.2+z*0.15)*math.cos(y*0.18)*0.5+0.5)*255)&0xFF
+                          f.write(bytes([n1,n2,int((n1+n2)/2),255,int((math.sin(x*0.05+y*0.07+z*0.09)*0.5+0.5)*255)&0xFF,int((math.cos(x*0.08+z*0.06)*0.5+0.5)*255)&0xFF]))
+          print('Noise asset generated')
+          "
+      - uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: Make gradlew executable
-        run: chmod +x ./gradlew
-
+          key: gradle-cache-v2
       - name: Build Release APK
         run: ./gradlew assembleRelease --no-daemon --stacktrace
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v4
-        with:
-          name: WishWillow-release-apk
-          path: |
-            app/build/outputs/apk/release/*.apk
-          retention-days: 30
-
       - name: Verify APK
         run: |
           ls -lh app/build/outputs/apk/release/
-          echo "APK size check:"
           du -h app/build/outputs/apk/release/*.apk
+      - uses: actions/upload-artifact@v4
+        with:
+          name: WishWillow-release-apk
+          path: app/build/outputs/apk/release/*.apk
