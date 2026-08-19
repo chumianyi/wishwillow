@@ -16,10 +16,12 @@ jobs:
         run: |
           curl -sL -o gradle/wrapper/gradle-wrapper.jar https://raw.githubusercontent.com/gradle/gradle/v8.5.0/gradle/wrapper/gradle-wrapper.jar
           chmod +x gradlew
+      - name: Install Python deps
+        run: pip install pillow numpy
       - name: Generate App Icons
         run: |
-          python3 -c "
-          from PIL import Image, ImageDraw, ImageFilter
+          python3 << 'PYEOF'
+          from PIL import Image, ImageDraw
           import math, os
           def make_icon(size):
               img = Image.new('RGBA', (size, size), (0,0,0,0))
@@ -42,28 +44,18 @@ jobs:
               os.makedirs(p, exist_ok=True)
               make_icon(sz).save(f'{p}/ic_launcher.png')
           print('Icons generated')
-          "
+          PYEOF
       - name: Generate Noise Asset (12MB)
         run: |
-          python3 -c "
-          import math, os
-          os.makedirs('app/src/main/assets', exist_ok=True)
-          size=128
-          with open('app/src/main/assets/noise_volume.bin','wb') as f:
-              for z in range(size):
-                  for y in range(size):
-                      for x in range(size):
-                          n1=int((math.sin(x*0.1+y*0.1+z*0.05)*0.5+0.5)*255)&0xFF
-                          n2=int((math.sin(x*0.2+z*0.15)*math.cos(y*0.18)*0.5+0.5)*255)&0xFF
-                          f.write(bytes([n1,n2,int((n1+n2)/2),255,int((math.sin(x*0.05+y*0.07+z*0.09)*0.5+0.5)*255)&0xFF,int((math.cos(x*0.08+z*0.06)*0.5+0.5)*255)&0xFF]))
-          print('Noise asset generated')
-          "
+          mkdir -p app/src/main/assets
+          head -c 12582912 /dev/urandom > app/src/main/assets/noise_volume.bin
+          ls -lh app/src/main/assets/noise_volume.bin
       - uses: actions/cache@v4
         with:
           path: |
             ~/.gradle/caches
             ~/.gradle/wrapper
-          key: gradle-cache-v2
+          key: gradle-cache-v3
       - name: Build Release APK
         run: ./gradlew assembleRelease --no-daemon --stacktrace
       - name: Verify APK
